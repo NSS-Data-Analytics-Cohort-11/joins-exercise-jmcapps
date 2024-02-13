@@ -55,7 +55,7 @@ LIMIT 5;
 
 -- 6. How many movies in the dataset are distributed by a company which is not headquartered in California? Which of these movies has the highest imdb rating?
 
-SELECT distributors.headquarters, COUNT(specs.film_title), specs.film_title, rating.imdb_rating
+SELECT distributors.headquarters, specs.film_title, rating.imdb_rating
 FROM distributors
 INNER JOIN specs
 ON specs.domestic_distributor_id = distributors.distributor_id
@@ -68,13 +68,28 @@ GROUP BY distributors.headquarters, specs.film_title, rating.imdb_rating;
 
 -- 7. Which have a higher average rating, movies which are over two hours long or movies which are under two hours?
 
+SELECT COUNT(specs.length_in_min), AVG(rating.imdb_rating)
+FROM specs
+INNER JOIN rating
+ON rating.movie_id = specs.movie_id
+WHERE specs.length_in_min > 120;
 
-SELECT length_in_min
-	CASE 
-		WHEN length_in_min > 120 THEN 'mins greater than 120'
-		WHEN length_in_min < 120 THEN 'mins less than 120'
-	END
-FROM specs;
+-- Over two hours average imdb rating is 7.26
+
+SELECT COUNT(specs.length_in_min), AVG(rating.imdb_rating)
+FROM specs
+INNER JOIN rating
+ON rating.movie_id = specs.movie_id
+WHERE specs.length_in_min < 120;
+
+-- Under two hours average imdb rating is 6.92
+
+--Answer: Movies that are over two hours long have a higher averge imdb rating than movies
+-- that are under two hours long.
+
+
+
+
 
 
 
