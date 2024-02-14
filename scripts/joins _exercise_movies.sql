@@ -37,7 +37,7 @@ ORDER BY revenue.worldwide_gross DESC;
 
 SELECT DISTINCT distributors.company_name, COUNT(specs.film_title)
 FROM distributors
-FULL JOIN specs
+LEFT JOIN specs
 ON distributors.distributor_id = specs.domestic_distributor_id
 GROUP BY distributors.company_name;
 
@@ -68,24 +68,21 @@ GROUP BY distributors.headquarters, specs.film_title, rating.imdb_rating;
 
 -- 7. Which have a higher average rating, movies which are over two hours long or movies which are under two hours?
 
-SELECT COUNT(specs.length_in_min), AVG(rating.imdb_rating)
+SELECT
+CASE
+	WHEN length_in_min >= 120 THEN '>2 Hours'
+	ELSE '<2 Hours'
+END AS length_of_movie, ROUND(avg(imdb_rating), 2) AS avg_rating
 FROM specs
 INNER JOIN rating
-ON rating.movie_id = specs.movie_id
-WHERE specs.length_in_min > 120;
-
--- Over two hours average imdb rating is 7.26
-
-SELECT COUNT(specs.length_in_min), AVG(rating.imdb_rating)
-FROM specs
-INNER JOIN rating
-ON rating.movie_id = specs.movie_id
-WHERE specs.length_in_min < 120;
-
--- Under two hours average imdb rating is 6.92
+USING (movie_id)
+GROUP BY length_of_movie
+ORDER BY avg_rating DESC;
 
 --Answer: Movies that are over two hours long have a higher averge imdb rating than movies
 -- that are under two hours long.
+
+
 
 
 
